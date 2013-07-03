@@ -60,7 +60,7 @@ class Ui_MainWindow(object):
         self.tableWidgetInbox.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.tableWidgetInbox.setWordWrap(False)
         self.tableWidgetInbox.setObjectName(_fromUtf8("tableWidgetInbox"))
-        self.tableWidgetInbox.setColumnCount(4)
+        self.tableWidgetInbox.setColumnCount(5)
         self.tableWidgetInbox.setRowCount(0)
         item = QtGui.QTableWidgetItem()
         self.tableWidgetInbox.setHorizontalHeaderItem(0, item)

@@ -379,8 +379,17 @@ class MyForm(QtGui.QMainWindow):
             if not read:
                 newItem.setFont(font)
             newItem.setData(Qt.UserRole, str(fromAddress))
-
             self.ui.tableWidgetInbox.setItem(0, 1, newItem)
+            
+            newsubject = subject
+            if newsubject[0:3] == 'Re:':
+               newsubject = newsubject[3:]
+               while newsubject[0:1] == ' ':
+                  newsubject = newsubject[1:]
+               subject = "--> " + newsubject
+
+            newsubject += " : " + str(received)
+
             newItem = QtGui.QTableWidgetItem(unicode(subject, 'utf-8'))
             newItem.setToolTip(unicode(subject, 'utf-8'))
             newItem.setData(Qt.UserRole, unicode(message, 'utf-8)'))
@@ -389,6 +398,14 @@ class MyForm(QtGui.QMainWindow):
             if not read:
                 newItem.setFont(font)
             self.ui.tableWidgetInbox.setItem(0, 2, newItem)
+
+            newItem = QtGui.QTableWidgetItem(unicode(newsubject, 'utf-8'))
+            newItem.setToolTip(unicode(newsubject, 'utf-8'))
+            newItem.setData(Qt.UserRole, unicode(message, 'utf-8)'))
+            newItem.setFlags(
+                QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+            self.ui.tableWidgetInbox.setItem(0, 4, newItem)
+            
             newItem = myTableWidgetItem(unicode(strftime(shared.config.get(
                 'bitmessagesettings', 'timeformat'), localtime(int(received))), 'utf-8'))
             newItem.setToolTip(unicode(strftime(shared.config.get(
@@ -400,7 +417,8 @@ class MyForm(QtGui.QMainWindow):
             if not read:
                 newItem.setFont(font)
             self.ui.tableWidgetInbox.setItem(0, 3, newItem)
-        self.ui.tableWidgetInbox.sortItems(3, Qt.DescendingOrder)
+
+        self.ui.tableWidgetInbox.sortItems(4, Qt.AscendingOrder)
         self.ui.tableWidgetInbox.keyPressEvent = self.tableWidgetInboxKeyPressEvent
 
         # Load Sent items from database
@@ -434,7 +452,8 @@ class MyForm(QtGui.QMainWindow):
                 for row in queryreturn:
                     toLabel, = row
 
-            self.ui.tableWidgetSent.insertRow(0)
+#            self.ui.tableWidgetSent.insertRow(0)
+            self.ui.tableWidgetInbox.insertRow(0)
             if toLabel == '':
                 newItem = QtGui.QTableWidgetItem(unicode(toAddress, 'utf-8'))
                 newItem.setToolTip(unicode(toAddress, 'utf-8'))
@@ -444,7 +463,8 @@ class MyForm(QtGui.QMainWindow):
             newItem.setData(Qt.UserRole, str(toAddress))
             newItem.setFlags(
                 QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-            self.ui.tableWidgetSent.setItem(0, 0, newItem)
+#            self.ui.tableWidgetSent.setItem(0, 0, newItem)
+            self.ui.tableWidgetInbox.setItem(0, 0, newItem)
             if fromLabel == '':
                 newItem = QtGui.QTableWidgetItem(
                     unicode(fromAddress, 'utf-8'))
@@ -455,13 +475,26 @@ class MyForm(QtGui.QMainWindow):
             newItem.setData(Qt.UserRole, str(fromAddress))
             newItem.setFlags(
                 QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-            self.ui.tableWidgetSent.setItem(0, 1, newItem)
+#            self.ui.tableWidgetSent.setItem(0, 1, newItem)
+            self.ui.tableWidgetInbox.setItem(0, 1, newItem)
+
+            newsubject = subject
+            if newsubject[0:3] == 'Re:':
+               newsubject = newsubject[3:]
+               while newsubject[0:1] == ' ':
+                  newsubject = newsubject[1:]
+               subject = "<-- " + newsubject
+            newsubject += " : " + str(lastactiontime)
+
             newItem = QtGui.QTableWidgetItem(unicode(subject, 'utf-8'))
             newItem.setToolTip(unicode(subject, 'utf-8'))
             newItem.setData(Qt.UserRole, unicode(message, 'utf-8)'))
             newItem.setFlags(
                 QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-            self.ui.tableWidgetSent.setItem(0, 2, newItem)
+#            self.ui.tableWidgetSent.setItem(0, 2, newItem)
+            self.ui.tableWidgetInbox.setItem(0, 2, newItem)
+
+
             if status == 'awaitingpubkey':
                 statusText = _translate(
                     "MainWindow", "Waiting on their encryption key. Will request it again soon.")
@@ -498,15 +531,28 @@ class MyForm(QtGui.QMainWindow):
             else:
                 statusText = _translate("MainWindow", "Unknown status: %1 %2").arg(status).arg(unicode(
                     strftime(shared.config.get('bitmessagesettings', 'timeformat'), localtime(lastactiontime)),'utf-8'))
+
             newItem = myTableWidgetItem(statusText)
             newItem.setToolTip(statusText)
             newItem.setData(Qt.UserRole, QByteArray(ackdata))
             newItem.setData(33, int(lastactiontime))
             newItem.setFlags(
                 QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-            self.ui.tableWidgetSent.setItem(0, 3, newItem)
-        self.ui.tableWidgetSent.sortItems(3, Qt.DescendingOrder)
-        self.ui.tableWidgetSent.keyPressEvent = self.tableWidgetSentKeyPressEvent
+#            self.ui.tableWidgetSent.setItem(0, 3, newItem)
+            self.ui.tableWidgetInbox.setItem(0, 3, newItem)
+
+
+            newItem = QtGui.QTableWidgetItem(unicode(newsubject, 'utf-8'))
+            newItem.setToolTip(unicode(newsubject, 'utf-8'))
+            newItem.setData(Qt.UserRole, unicode(message, 'utf-8)'))
+            newItem.setFlags(
+                QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+            self.ui.tableWidgetInbox.setItem(0, 4, newItem)
+
+#        self.ui.tableWidgetSent.sortItems(3, Qt.DescendingOrder)
+#        self.ui.tableWidgetSent.keyPressEvent = self.tableWidgetSentKeyPressEvent
+        self.ui.tableWidgetInbox.sortItems(4, Qt.AscendingOrder)
+        self.ui.tableWidgetInbox.keyPressEvent = self.tableWidgetSentKeyPressEvent
 
         # Initialize the address book
         shared.sqlLock.acquire()
